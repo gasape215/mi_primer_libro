@@ -1061,33 +1061,41 @@ def build_pdf_for_lang(lang, engine_name):
 
 def sanitize_config(config_path):
     """
-    Removes exclusion patterns entirely to prevent EISDIR errors in temp environment.
+    Preserve user exclude patterns while ensuring temporary PDF builds keep
+    a minimal safe exclusion list.
+
+    The export pipeline already copies a standalone config into
+    _temp_pdf_<lang>. If the user's original book config hides content by
+    excluding files or directories, we must preserve those rules for the PDF
+    build. We still add a small set of safety patterns for temp build support.
     """
     try:
         with open(config_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
+            config = yaml.safe_load(f) or {}
 
-        new_lines = []
-        exclude_written = False
-        for line in lines:
-            if "exclude_patterns:" in line:
-                # Force a safe, minimal exclusion list
-                new_lines.append(
-                    'exclude_patterns: ["_build", "**.ipynb_checkpoints", ".git", ".github"]\n'
-                )
-                exclude_written = True
-                continue
-            new_lines.append(line)
+        safe_patterns = ["_build", "**.ipynb_checkpoints", ".git", ".github"]
+        existing = config.get("exclude_patterns")
 
-        if not exclude_written:
-            new_lines.append(
-                'exclude_patterns: ["_build", "**.ipynb_checkpoints", ".git", ".github"]\n'
-            )
+        if existing is None:
+            config["exclude_patterns"] = safe_patterns.copy()
+        elif isinstance(existing, str):
+            patterns = [existing]
+            patterns.extend(p for p in safe_patterns if p != existing)
+            config["exclude_patterns"] = patterns
+        elif isinstance(existing, list):
+            patterns = list(existing)
+            for pattern in safe_patterns:
+                if pattern not in patterns:
+                    patterns.append(pattern)
+            config["exclude_patterns"] = patterns
+        else:
+            config["exclude_patterns"] = safe_patterns.copy()
 
-        with open(config_path, "w", encoding="utf-8") as f:
-            f.writelines(new_lines)
+        with open(config_path, "w", encoding="utf-8", newline="\n") as f:
+            yaml.safe_dump(config, f, allow_unicode=True, sort_keys=False)
+
         configure_sphinx_image_converter_for_pdf(config_path)
-        print(f"🔧 Configuración saneada (excludes minimos seguros) en: {config_path}")
+        print(f"🔧 Configuración saneada (excludes preservados) en: {config_path}")
     except Exception as e:
         print(f"⚠️ Error saneando configuración: {e}")
 

@@ -9,5 +9,8 @@ parts:
     - file: en/09_higher_degree_equations/intro
   - caption: Research paper
     chapters:
+    - file: en/08_quadratic_equations/intro
+    - file: en/09_higher_degree_equations/intro
+    - file: en/10_introduction_to_gravity/intro
     - file: en/11_paper_scri/intro
     - file: en/12_bibliography

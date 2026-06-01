@@ -4,8 +4,10 @@ parts:
   - caption: Ecuaciones de segundo grado
     chapters:
     - file: es/08_ecuaciones_segundo_grado/intro
-  - caption: Artículo
+  - caption: Ecuaciones de grado superior
     chapters:
-    - file: es/09_paper_fg/intro
-    - file: es/10_paper_scri/intro
-    - file: es/11_bibliografia
+    - file: es/09_ecuaciones_grado_superior/intro
+  - caption: Artículo científico
+    chapters:
+    - file: es/11_paper_scri/intro
+    - file: es/12_bibliografia

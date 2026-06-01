@@ -4,8 +4,10 @@ parts:
   - caption: Quadratic Equations
     chapters:
     - file: en/08_quadratic_equations/intro
+  - caption: Higher Degree Equations
+    chapters:
+    - file: en/09_higher_degree_equations/intro
   - caption: Research paper
     chapters:
-    - file: en/09_paper_fg/intro
-    - file: en/10_paper_scri/intro
-    - file: en/11_bibliography
+    - file: en/11_paper_scri/intro
+    - file: en/12_bibliography
